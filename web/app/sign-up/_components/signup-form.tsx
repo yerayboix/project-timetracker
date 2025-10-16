@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { authClient, getErrorMessage } from "@/lib/auth-client"
 import { useState } from "react"
+import { redirect } from "next/navigation"
 
 const signupSchema = z.object({
     fullname: z.string().min(2, "El nombre completo debe tener al menos 2 caracteres").max(100, "El nombre completo no debe exceder los 100 caracteres"),
@@ -36,7 +37,7 @@ const signupSchema = z.object({
 
 type SignUpSchema = z.infer<typeof signupSchema>;
 
-const callbackURL = process.env.NEXT_PUBLIC_SIGNUP_CALLBACK_URL || "http://localhost:3000/dashboard";
+const callbackURL = process.env.NEXT_PUBLIC_SIGNUP_CALLBACK_URL || "/dashboard";
 
 export function SignupForm({
     className,
@@ -55,19 +56,20 @@ export function SignupForm({
     });
 
     async function onSubmit(values: SignUpSchema) {
-        setIsLoading(true);
-        setAuthErrorMessage(null);
         const { fullname, email, password } = values;
         const { data, error } = await authClient.signUp.email({
             name: fullname,
             email: email,
             password: password,
-            callbackURL: callbackURL
-        })
-        if (error) {
-            setAuthErrorMessage(error.code ? getErrorMessage(error.code) : error.message || "Error desconocido");
-        }
-        setIsLoading(false);
+            callbackURL: callbackURL,
+        }, {
+            onRequest: () => setIsLoading(true),
+            onSuccess: () => redirect(callbackURL),
+            onError: (ctx) => {
+                setAuthErrorMessage(ctx.error.code ? getErrorMessage(ctx.error.code) : ctx.error.message || "Error desconocido")
+                setIsLoading(false);
+            }
+        });
     }
 
     return (
