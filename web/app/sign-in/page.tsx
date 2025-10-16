@@ -1,6 +1,6 @@
 import { Timer, ToyBrick } from "lucide-react"
 
-import { LoginForm } from "@/app/sign-in/_components/login-form"
+import { SignInForm } from "@/app/sign-in/_components/signin-form"
 
 export default function LoginPage() {
   return (
@@ -12,7 +12,7 @@ export default function LoginPage() {
           </div>
           Project Timetracker
         </a>
-        <LoginForm />
+        <SignInForm />
       </div>
     </div>
   )
