@@ -18,9 +18,11 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { set, z } from "zod"
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { authClient, getErrorMessage } from "@/lib/auth-client"
+import { useState } from "react"
 
 const signupSchema = z.object({
     fullname: z.string().min(2, "El nombre completo debe tener al menos 2 caracteres").max(100, "El nombre completo no debe exceder los 100 caracteres"),
@@ -34,10 +36,14 @@ const signupSchema = z.object({
 
 type SignUpSchema = z.infer<typeof signupSchema>;
 
+const callbackURL = process.env.NEXT_PUBLIC_SIGNUP_CALLBACK_URL || "http://localhost:3000/dashboard";
+
 export function SignupForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
     const form = useForm<SignUpSchema>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -48,8 +54,20 @@ export function SignupForm({
         }
     });
 
-    function onSubmit(values: SignUpSchema) {
-        console.log(values);
+    async function onSubmit(values: SignUpSchema) {
+        setIsLoading(true);
+        setAuthErrorMessage(null);
+        const { fullname, email, password } = values;
+        const { data, error } = await authClient.signUp.email({
+            name: fullname,
+            email: email,
+            password: password,
+            callbackURL: callbackURL
+        })
+        if (error) {
+            setAuthErrorMessage(error.code ? getErrorMessage(error.code) : error.message || "Error desconocido");
+        }
+        setIsLoading(false);
     }
 
     return (
@@ -120,7 +138,16 @@ export function SignupForm({
                                     </FormItem>
                                 )} />
                                 <Field>
-                                    <Button type="submit">Crear cuenta</Button>
+                                    {authErrorMessage && (
+                                        <FieldDescription className="text-destructive text-center">
+                                            {authErrorMessage}
+                                        </FieldDescription>
+                                    )}
+                                </Field>
+                                <Field>
+                                    <Button type="submit" disabled={isLoading}>
+                                        {isLoading ? "Creando cuenta..." : "Crear cuenta"}
+                                    </Button>
                                     <FieldDescription className="text-center">
                                         ¿Ya tienes una cuenta? <a href="/sign-in">Inicia sesión</a>
                                     </FieldDescription>
