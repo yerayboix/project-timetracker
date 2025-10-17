@@ -59,8 +59,10 @@ export function SignInForm({
       onRequest: () => setIsLoading(true),
       onSuccess: () => redirect(callbackURL),
       onError: (ctx) => {
-        setAuthErrorMessage(ctx.error.code ? getErrorMessage(ctx.error.code) : ctx.error.message || "Error desconocido")
-        toast.error(authErrorMessage || "Error desconocido");
+        const errorCode = ctx.error.code;
+        const errorMsg = getErrorMessage(errorCode);
+        setAuthErrorMessage(errorMsg);
+        toast.error(errorMsg);
         setIsLoading(false);
       }
     });
