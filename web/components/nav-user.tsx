@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export function NavUser({
   user,
@@ -45,14 +46,18 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   async function handleLogout() {
     await authClient.signOut({
       fetchOptions: {
+        onRequest: () => setIsLoading(true),
         onSuccess: () => {
           router.push("/")
         },
+        onError: () => setIsLoading(false),
+        onResponse: () => setIsLoading(false),
       }
     })
   }
@@ -116,9 +121,9 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogout} disabled={isLoading}>
               <LogOut />
-              Log out
+              {isLoading ? "Logging out..." : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
