@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import {ClientGreeting} from "./client-greetings";
 
 export default async function Home() {
-  prefetch(
-    trpc.hello.queryOptions({ text: "world" }),
+  void await prefetch(
+    trpc.project.getById.queryOptions({ projectId: "1" }),
   )
   return (
     <HydrateClient>

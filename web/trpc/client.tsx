@@ -7,8 +7,11 @@ import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { useState } from 'react';
 import { makeQueryClient } from './query-client';
 import type { AppRouter } from './routers/_app';
+
 export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
+
 let browserQueryClient: QueryClient;
+
 function getQueryClient() {
   if (typeof window === 'undefined') {
     // Server: always make a new query client
@@ -21,6 +24,7 @@ function getQueryClient() {
   if (!browserQueryClient) browserQueryClient = makeQueryClient();
   return browserQueryClient;
 }
+
 function getUrl() {
   const base = (() => {
     if (typeof window !== 'undefined') return '';
@@ -28,6 +32,7 @@ function getUrl() {
   })();
   return `${base}/api/trpc`;
 }
+
 export function TRPCReactProvider(
   props: Readonly<{
     children: React.ReactNode;
