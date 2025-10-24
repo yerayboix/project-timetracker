@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { baseProcedure, createTRPCRouter } from "../init";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "../init";
 import { db } from "@/lib/db";
 import { eq, sql } from "drizzle-orm";
 import { projects } from "../../lib/db/schema/project";
@@ -29,7 +29,7 @@ export const projectRouter = createTRPCRouter({
     }),
 
   // Listar todos los proyectos
-  list: baseProcedure
+  list: protectedProcedure
     .input(
       z.object({
         ownerId: z.string().min(1, "El ownerId es requerido"),
