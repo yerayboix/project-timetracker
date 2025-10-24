@@ -29,15 +29,10 @@ export const projectRouter = createTRPCRouter({
     }),
 
   // Listar todos los proyectos
-  list: protectedProcedure
-    .input(
-      z.object({
-        ownerId: z.string().min(1, "El ownerId es requerido"),
-      })
-    )
-    .query(async ({ input }) => {
+  listByCurrentUser: protectedProcedure
+    .query(async ({ ctx }) => {
       return await db.query.projects.findMany({
-        where: eq(projects.ownerId, input.ownerId),
+        where: eq(projects.ownerId, ctx.user.id),
       });
     }),
 

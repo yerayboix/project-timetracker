@@ -9,7 +9,7 @@ export function ClientGreeting({...props}) {
   
   const ownerId = props.session.user.id
   
-  const projects = useQuery(trpc.project.list.queryOptions({ ownerId }));
+  const projects = useQuery(trpc.project.listByCurrentUser.queryOptions());
 
   const createProjectMutation = useMutation({
     ...trpc.project.create.mutationOptions(),
