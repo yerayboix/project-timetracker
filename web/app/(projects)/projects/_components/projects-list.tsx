@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { FolderKanban, ShieldAlertIcon } from "lucide-react";
+import { ChevronRight, FolderKanban } from "lucide-react";
 
 export default function ProjectsList() {
     const trpc = useTRPC();
@@ -33,9 +33,17 @@ export default function ProjectsList() {
                         <ItemTitle>{project.name}</ItemTitle>
                         <ItemDescription>{project.description}</ItemDescription>
                     </ItemContent>
+                    <ItemContent>
+                        <ItemContent className="flex-none text-left">
+                            <ItemDescription>Estimadas: {project.estimatedHours || 0} horas</ItemDescription>
+                        </ItemContent>
+                        <ItemContent className="flex-none text-left">
+                            <ItemDescription>Precio/hora: {project.hourlyRate || 0} €</ItemDescription>
+                        </ItemContent>
+                    </ItemContent>
                     <ItemActions>
-                        <Button variant="default">View</Button>
-                        <Button variant="destructive">Delete</Button>
+                        <Button variant="default"><ChevronRight /></Button>
+                        <Button variant="destructive">Eliminar</Button>
                     </ItemActions>
                 </Item>
             ))}

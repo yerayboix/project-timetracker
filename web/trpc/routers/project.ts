@@ -43,6 +43,8 @@ export const projectRouter = createTRPCRouter({
         name: z.string().min(1, "El nombre es requerido"),
         description: z.string().optional(),
         color: z.string().optional(),
+        hourlyRate: z.number().optional(),
+        estimatedHours: z.number().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {

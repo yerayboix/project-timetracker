@@ -120,6 +120,8 @@ const formSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   description: z.string().optional(),
   color: z.string().optional(),
+  hourlyRate: z.number().optional(),
+  estimatedHours: z.number().optional(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -151,6 +153,8 @@ const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpen
       name: '',
       description: '',
       color: '#000000',
+      hourlyRate: 0,
+      estimatedHours: 0,
     },
   });
 
@@ -159,6 +163,8 @@ const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpen
       name: values.name,
       description: values.description,
       color: values.color,
+      hourlyRate: values.hourlyRate ? Number(values.hourlyRate) : 0,
+      estimatedHours: values.estimatedHours ? Number(values.estimatedHours) : 0,
     });
   };
 
@@ -205,6 +211,40 @@ const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpen
                 </FormItem>
               )}
             />
+            <div className="flex flex-row gap-4">
+              <FormField
+                control={form.control}
+                name="estimatedHours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Horas estimadas</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="100" onChange={(e) => field.onChange(Number(e.target.value))} />
+                    </FormControl>
+                    <FormDescription>
+                      Número total de horas estimadas para completar el proyecto.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="hourlyRate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Precio por hora (€)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="50" onChange={(e) => field.onChange(Number(e.target.value))} />
+                    </FormControl>
+                    <FormDescription>
+                      Precio por hora asociado al proyecto.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <DialogFooter>
               <Button type="submit" disabled={createProjectMutation.isPending}>
                 {createProjectMutation.isPending ? 'Creando...' : 'Crear Proyecto'}
