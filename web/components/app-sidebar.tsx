@@ -5,6 +5,7 @@ import {
   BookOpen,
   Bot,
   Command,
+  Folder,
   FolderPlus,
   Frame,
   GalleryVerticalEnd,
@@ -46,9 +47,13 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: LayoutDashboard,
-      isActive: true
+    },
+    {
+      title: "Proyectos",
+      url: "/projects",
+      icon: Folder,
     },
   ],
   projects: [
@@ -133,6 +138,7 @@ const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpen
           queryKey: [['project', 'listByCurrentUser']],
         }
       );
+      onOpenChange(false);
     },
     onError: (error) => {
       toast.error(`Error al crear proyecto: ${error.message}`);
