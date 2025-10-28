@@ -39,7 +39,7 @@ import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 import { toast } from "sonner"
 import { useTRPC } from "@/trpc/client"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 // This is sample data.
 const data = {
@@ -121,12 +121,18 @@ type FormSchema = z.infer<typeof formSchema>;
 
 const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) => {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const createProjectMutation = useMutation({
     ...trpc.project.create.mutationOptions(),
     onSuccess: () => {
       toast.success(`Proyecto "${form.getValues("name")}" creado de forma correcta.`);
       form.reset();
+      queryClient.invalidateQueries(
+        {
+          queryKey: [['project', 'listByCurrentUser']],
+        }
+      );
     },
     onError: (error) => {
       toast.error(`Error al crear proyecto: ${error.message}`);
