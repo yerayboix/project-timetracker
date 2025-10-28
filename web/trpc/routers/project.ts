@@ -28,7 +28,7 @@ export const projectRouter = createTRPCRouter({
       return project;
     }),
 
-  // Listar todos los proyectos
+  // Listar todos los proyectos del usuario actual
   listByCurrentUser: protectedProcedure
     .query(async ({ ctx }) => {
       return await db.query.projects.findMany({
@@ -41,13 +41,20 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1, "El nombre es requerido"),
-        ownerId: z.string().min(1, "El ownerId es requerido"),
         description: z.string().optional(),
         color: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
-      const [created] = await db.insert(projects).values(input).returning();
+    .mutation(async ({ input, ctx }) => {
+      const ownerId = ctx.user?.id;
+
+      if (!ownerId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No tienes permiso para crear un proyecto para este usuario",
+        });
+      }
+      const [created] = await db.insert(projects).values({ ...input, ownerId }).returning();
 
       if (!created) {
         throw new TRPCError({

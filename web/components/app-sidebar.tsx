@@ -5,6 +5,7 @@ import {
   BookOpen,
   Bot,
   Command,
+  FolderPlus,
   Frame,
   GalleryVerticalEnd,
   LayoutDashboard,
@@ -24,8 +25,21 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
+import z from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Input } from "./ui/input"
+import { Textarea } from "./ui/textarea"
+import { Button } from "./ui/button"
+import { toast } from "sonner"
+import { useTRPC } from "@/trpc/client"
+import { useMutation } from "@tanstack/react-query"
 
 // This is sample data.
 const data = {
@@ -68,6 +82,7 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
         </div>
       </SidebarHeader>
       <SidebarContent>
+        <CreateProjectButton />
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
@@ -76,5 +91,116 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
+  )
+}
+
+const CreateProjectButton = () => {
+  const [isOpen, setIsOpen] = React.useState(false)
+  return (
+    <SidebarMenuItem className="p-2">
+      <SidebarMenuButton
+        tooltip="Quick Create"
+        className="bg-primary cursor-pointer text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+        onClick={() => setIsOpen(true)}
+      >
+        <FolderPlus className="size-4" />
+        <span>Nuevo proyecto</span>
+      </SidebarMenuButton>
+      <CreateProjectDialog isOpen={isOpen} onOpenChange={setIsOpen} />
+    </SidebarMenuItem>
+  )
+}
+
+const formSchema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  description: z.string().optional(),
+  color: z.string().optional(),
+});
+
+type FormSchema = z.infer<typeof formSchema>;
+
+const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) => {
+  const trpc = useTRPC();
+
+  const createProjectMutation = useMutation({
+    ...trpc.project.create.mutationOptions(),
+    onSuccess: () => {
+      toast.success(`Proyecto "${form.getValues("name")}" creado de forma correcta.`);
+      form.reset();
+    },
+    onError: (error) => {
+      toast.error(`Error al crear proyecto: ${error.message}`);
+    },
+  });
+  
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      color: '#000000',
+    },
+  });
+
+  const onSubmit = (values: FormSchema) => {
+    createProjectMutation.mutate({
+      name: values.name,
+      description: values.description,
+      color: values.color,
+    });
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Nuevo proyecto</DialogTitle>
+          <DialogDescription>
+            Aquí podrás crear un nuevo proyecto para organizar tus tareas y actividades.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre del proyecto</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Project Timetracker" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Este es el nombre que se mostrará en la lista de proyectos.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Descripción del proyecto..." {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Esta es la descripción que se mostrará en la lista de proyectos.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <Button type="submit" disabled={createProjectMutation.isPending}>
+                {createProjectMutation.isPending ? 'Creando...' : 'Crear Proyecto'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }

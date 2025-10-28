@@ -29,7 +29,6 @@ export function ClientGreeting({...props}) {
     }
     createProjectMutation.mutate({
       name: 'Nuevo Proyecto',
-      ownerId: ownerId,
       description: 'Descripción del proyecto',
       color: '#FF5733',
     });
