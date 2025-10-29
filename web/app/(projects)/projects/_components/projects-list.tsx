@@ -52,7 +52,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
             </Button>
 
             <Link href={`/projects/${project.id}`} className="block h-full">
-                <Card className="hover:shadow-md transition-all duration-200 flex flex-col h-full">
+                <Card className="hover:shadow-lg transition-all duration-200 flex flex-col h-full">
                     <CardHeader>
                         <div className="flex items-start gap-2">
                             <div className="bg-primary/10 p-2 rounded-md">
@@ -68,13 +68,13 @@ const ProjectCard = ({ project }: { project: Project }) => {
                     </CardHeader>
                     <CardContent>
                         <div className="flex w-full flex-wrap gap-2">
-                            <Badge variant="secondary">
+                            <Badge variant="default">
                                 <b>Estimadas:</b> {project.estimatedHours || "0"} horas
                             </Badge>
-                            <Badge variant="secondary">
+                            <Badge variant="default">
                                 <b>Precio/h:</b> {project.hourlyRate || "0"} €
                             </Badge>
-                            <Badge variant="secondary">
+                            <Badge variant="default">
                                 <b>Realizadas:</b> {project.estimatedHours || "0"} horas
                             </Badge>
                         </div>
