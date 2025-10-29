@@ -1,5 +1,4 @@
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
-import { Suspense } from "react";
 import { ClientGreeting } from "./client-greetings";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
