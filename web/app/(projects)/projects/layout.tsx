@@ -16,7 +16,7 @@ export default async function ProjectLayout({
     }
     return (
         <SidebarProvider>
-            <AppSidebar session={session} />
+            <AppSidebar variant="inset" session={session} />
             <SidebarInset>
                 {children}
             </SidebarInset>
