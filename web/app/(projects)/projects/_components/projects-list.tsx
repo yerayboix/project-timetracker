@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Project } from "@/lib/db/schema/project";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -37,19 +37,7 @@ export default function ProjectsList() {
 const ProjectCard = ({ project }: { project: Project }) => {
     return (
         <div className="relative group">
-            <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 z-10 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                title="Eliminar proyecto"
-                onClick={(e) => {
-                    e.preventDefault(); // Prevent Link navigation
-                    // Logic to delete the project
-                    console.log("Eliminar proyecto:", project.id);
-                }}
-            >
-                <Trash2 className="h-4 w-4" />
-            </Button>
+
 
             <Link href={`/projects/${project.id}`} className="block h-full">
                 <Card className="hover:shadow-lg transition-all duration-200 flex flex-col h-full">
@@ -65,6 +53,21 @@ const ProjectCard = ({ project }: { project: Project }) => {
                                 </CardDescription>
                             </div>
                         </div>
+                        <CardAction>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-red-500/10 hover:text-red-500"
+                                title="Eliminar proyecto"
+                                onClick={(e) => {
+                                    e.preventDefault(); // Prevent Link navigation
+                                    // Logic to delete the project
+                                    console.log("Eliminar proyecto:", project.id);
+                                }}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </CardAction>
                     </CardHeader>
                     <CardContent>
                         <div className="flex w-full flex-wrap gap-2">
