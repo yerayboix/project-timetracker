@@ -6,7 +6,6 @@ import { projects } from "../../lib/db/schema/project";
 import { TRPCError } from "@trpc/server";
 
 export const projectRouter = createTRPCRouter({
-  // Obtener proyecto por ID
   getById: baseProcedure
     .input(
       z.object({
@@ -28,7 +27,7 @@ export const projectRouter = createTRPCRouter({
       return project;
     }),
 
-  // Listar todos los proyectos del usuario actual
+  // Get all projects for the current user
   listByCurrentUser: protectedProcedure
     .query(async ({ ctx }) => {
       return await db.query.projects.findMany({
@@ -36,8 +35,8 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
-  // Crear proyecto
-  create: baseProcedure
+  // Create a new project
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1, "El nombre es requerido"),
@@ -48,14 +47,8 @@ export const projectRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const ownerId = ctx.user?.id;
+      const ownerId = ctx.user.id;
 
-      if (!ownerId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "No tienes permiso para crear un proyecto para este usuario",
-        });
-      }
       const [created] = await db.insert(projects).values({ ...input, ownerId }).returning();
 
       if (!created) {
@@ -68,25 +61,24 @@ export const projectRouter = createTRPCRouter({
       return created;
     }),
 
-  // Actualizar proyecto
-  update: baseProcedure
+  // Update a project
+  update: protectedProcedure
     .input(
       z.object({
         projectId: z.string(),
-        ownerId: z.string().min(1, "El ownerId es requerido"),
         name: z.string().min(1).optional(),
         description: z.string().optional(),
         color: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { projectId, ...data } = input;
 
       const [updated] = await db
         .update(projects)
         .set(data)
         .where(
-          sql`${projects.id} = ${projectId} and ${projects.ownerId} = ${input.ownerId}`
+          sql`${projects.id} = ${projectId} and ${projects.ownerId} = ${ctx.user.id}`
         )
         .returning();
 
@@ -100,19 +92,18 @@ export const projectRouter = createTRPCRouter({
       return updated;
     }),
 
-  // Eliminar proyecto
-  delete: baseProcedure
+  // Delete a project
+  delete: protectedProcedure
     .input(
       z.object({
         projectId: z.string(),
-        ownerId: z.string().min(1, "El ownerId es requerido"),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const [deleted] = await db
         .delete(projects)
         .where(
-          sql`${projects.id} = ${input.projectId} and ${projects.ownerId} = ${input.ownerId}`
+          sql`${projects.id} = ${input.projectId} and ${projects.ownerId} = ${ctx.user.id}`
         )
         .returning();
 
