@@ -216,14 +216,11 @@ const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpen
                 control={form.control}
                 name="estimatedHours"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel>Horas estimadas</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="100" onChange={(e) => field.onChange(Number(e.target.value))} />
                     </FormControl>
-                    <FormDescription>
-                      Número total de horas estimadas para completar el proyecto.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -232,20 +229,17 @@ const CreateProjectDialog = ({ isOpen, onOpenChange }: { isOpen: boolean, onOpen
                 control={form.control}
                 name="hourlyRate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel>Precio por hora (€)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="50" onChange={(e) => field.onChange(Number(e.target.value))} />
                     </FormControl>
-                    <FormDescription>
-                      Precio por hora asociado al proyecto.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <DialogFooter>
+            <DialogFooter className="mt-10">
               <Button type="submit" disabled={createProjectMutation.isPending}>
                 {createProjectMutation.isPending ? 'Creando...' : 'Crear Proyecto'}
               </Button>

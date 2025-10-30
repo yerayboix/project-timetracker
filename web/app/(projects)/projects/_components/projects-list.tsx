@@ -1,12 +1,12 @@
 "use client"
 
+import BadgeStatus from "@/components/projects/badge-status";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Project } from "@/lib/db/schema/project";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { FolderKanban, Trash2 } from "lucide-react";
+import { FolderKanban } from "lucide-react";
 import Link from "next/link";
 
 export default function ProjectsList() {
@@ -37,8 +37,6 @@ export default function ProjectsList() {
 const ProjectCard = ({ project }: { project: Project }) => {
     return (
         <div className="relative group">
-
-
             <Link href={`/projects/${project.id}`} className="block h-full">
                 <Card className="hover:shadow-lg transition-all duration-200 flex flex-col h-full">
                     <CardHeader>
@@ -54,30 +52,18 @@ const ProjectCard = ({ project }: { project: Project }) => {
                             </div>
                         </div>
                         <CardAction>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 hover:bg-red-500/10 hover:text-red-500"
-                                title="Eliminar proyecto"
-                                onClick={(e) => {
-                                    e.preventDefault(); // Prevent Link navigation
-                                    // Logic to delete the project
-                                    console.log("Eliminar proyecto:", project.id);
-                                }}
-                            >
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <BadgeStatus status={project.status} />
                         </CardAction>
                     </CardHeader>
                     <CardContent>
                         <div className="flex w-full flex-wrap gap-2">
-                            <Badge variant="default">
+                            <Badge variant="outline">
                                 <b>Estimadas:</b> {project.estimatedHours || "0"} horas
                             </Badge>
-                            <Badge variant="default">
+                            <Badge variant="outline">
                                 <b>Precio/h:</b> {project.hourlyRate || "0"} €
                             </Badge>
-                            <Badge variant="default">
+                            <Badge variant="outline">
                                 <b>Realizadas:</b> {project.estimatedHours || "0"} horas
                             </Badge>
                         </div>
