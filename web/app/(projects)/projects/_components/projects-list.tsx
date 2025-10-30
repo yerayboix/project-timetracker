@@ -34,7 +34,7 @@ export default function ProjectsList() {
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
             {projects.data.map(project => (
                 <ProjectCard key={project.id} project={project} />
             ))}
@@ -54,14 +54,14 @@ const ProjectCard = ({ project }: { project: Project }) => {
                             </div>
                             <div className="flex-1 pr-6">
                                 <CardTitle className="text-lg font-semibold line-clamp-1">{project.name}</CardTitle>
-                                <CardDescription className="line-clamp-2 mt-1 text-sm text-muted-foreground">
-                                    {project.description || "Sin descripción"}
-                                </CardDescription>
                             </div>
                         </div>
                         <CardAction>
                             <BadgeStatus status={project.status} />
                         </CardAction>
+                        <CardDescription className="line-clamp-2 mt-1 text-sm text-muted-foreground">
+                            {project.description || "Sin descripción"}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex w-full flex-wrap gap-2">
