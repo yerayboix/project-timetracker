@@ -1,26 +1,18 @@
 "use client"
 import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
   Folder,
   FolderPlus,
   Frame,
-  GalleryVerticalEnd,
   LayoutDashboard,
   Map,
   PieChart,
-  Settings2,
-  SquareTerminal,
   Timer,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -30,7 +22,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
 import z from "zod"
 import { useForm } from "react-hook-form"
@@ -42,7 +34,7 @@ import { toast } from "sonner"
 import { useTRPC } from "@/trpc/client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-// This is sample data.
+
 const data = {
   navMain: [
     {
@@ -54,6 +46,11 @@ const data = {
       title: "Proyectos",
       url: "/projects",
       icon: Folder,
+    },
+    {
+      title: "Timetracker",
+      url: "/timetracker",
+      icon: Timer,
     },
   ],
   projects: [
