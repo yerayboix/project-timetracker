@@ -8,13 +8,21 @@ import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { FolderKanban } from "lucide-react";
 import Link from "next/link";
+import ProjectSkeleton from "./project-skeleton";
+import { ProjectEmpty } from "./project-empty";
 
 export default function ProjectsList() {
     const trpc = useTRPC();
     const projects = useQuery(trpc.project.listByCurrentUser.queryOptions());
 
     if (projects.isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, index) => (
+                    <ProjectSkeleton key={index} />
+                ))}
+            </div>
+        );
     }
 
     if (projects.isError) {
@@ -22,7 +30,7 @@ export default function ProjectsList() {
     }
 
     if (!projects.data || projects.data.length === 0) {
-        return <div>No projects found</div>;
+        return <ProjectEmpty />;
     }
 
     return (
