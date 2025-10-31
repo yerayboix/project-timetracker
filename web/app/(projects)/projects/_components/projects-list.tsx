@@ -13,7 +13,10 @@ import { ProjectEmpty } from "./project-empty";
 
 export default function ProjectsList() {
     const trpc = useTRPC();
-    const projects = useQuery(trpc.project.listByCurrentUser.queryOptions());
+    const projects = useQuery({
+        ...trpc.project.listByCurrentUser.queryOptions(),
+        staleTime: 1000 * 60, // 1 minute
+    });
 
     if (projects.isLoading) {
         return (

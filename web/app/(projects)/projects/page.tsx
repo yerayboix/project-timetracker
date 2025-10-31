@@ -3,9 +3,7 @@ import ProjectBreadcrumb from "./breadcrum";
 import ProjectsList from "./_components/projects-list";
 
 export default async function ProjectsPage() {
-  void await prefetch(
-    trpc.project.listByCurrentUser.queryOptions()
-  )
+  await prefetch(trpc.project.listByCurrentUser.queryOptions())
   return (
     <>
       <ProjectBreadcrumb />
